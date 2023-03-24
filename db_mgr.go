@@ -12,22 +12,19 @@ import (
 
 var MasterDB *xorm.Engine
 
-
 var (
 	ConnectDBErr = errors.New("connect db error")
 	UseDBErr     = errors.New("use db error")
 
-	WriteDBErr     = errors.New("write but affect zero row")
+	WriteDBErr = errors.New("write but affect zero row")
 )
 
-
-func init() {
+func DbInit() {
 	mysqlConfig, err := ConfigFile.GetSection("mysql")
 	if err != nil {
 		fmt.Println("get mysql config error:", err)
 		return
 	}
-
 
 	// 启动时就打开数据库连接
 	if err = initEngine(); err != nil {
@@ -66,7 +63,6 @@ func initEngine() error {
 
 	return nil
 }
-
 
 func IsTableExist() bool {
 	exists, err := MasterDB.IsTableExist(new(User))
@@ -126,7 +122,7 @@ func GetUserFromDbByID(user *User) (bool, error) {
 	return has, nil
 }
 
-func DbInsertNewUser(user *User) (error) {
+func DbInsertNewUser(user *User) error {
 	affected, err := engine.Insert(user)
 	if err != nil {
 		return err
@@ -137,7 +133,7 @@ func DbInsertNewUser(user *User) (error) {
 	return nil
 }
 
-func DbUpdateUser(updates map[string]interface{}) (error) {
+func DbUpdateUser(updates map[string]interface{}) error {
 	affected, err := engine.Table("user").Update(updates)
 	if err != nil {
 		return err

@@ -1,7 +1,5 @@
 package main
 
-
-
 func GenMD5WithSalt(passwd, salt string) string {
 	s := passwd + "::" + salt
 	md5Hash := md5.New()
@@ -9,7 +7,6 @@ func GenMD5WithSalt(passwd, salt string) string {
 	// 转16进制
 	return hex.EncodeToString(md5Hash.Sum(nil))
 }
-
 
 type Response struct {
 	// Code defines the business error code.
@@ -45,7 +42,7 @@ func DateToTimestamp(t string) int64 {
 	loc, _ := time.LoadLocation("Local") //获取当地时区
 	ts, err := time.ParseInLocation("2006-01-02 15:04:05", t, loc)
 	if err != nil {
-	   return 0
+		return 0
 	}
 
 	return ts.Unix()

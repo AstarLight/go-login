@@ -1,0 +1,9 @@
+listen_port = 7788
+
+
+
+[redis]
+addr = "10.10.40.231:6379" # redis
+
+[mysql]
+addr = "lijunshi:lijunshipwd@tcp(10.10.40.231:3306)/users"

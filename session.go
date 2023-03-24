@@ -5,26 +5,25 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"time"
 	"github.com/google/uuid"
+	"time"
 )
 
 // 鉴权，登录态管理
 
 const (
-	SessionTTL = 15 * 60 
+	SessionTTL = 15 * 60
 	SessionKey = "sess_"
 )
 
 // session 登录态管理
 type Session struct {
-	ID        string `json:"id"` // sessionid
+	ID         string `json:"id"` // sessionid
 	Username   string `json:"username"`
 	CreateTime int64  `json:"create_time"`
-	IsAdmin      bool   `json:"is_admin"`
-	UID string `json:"uid"`
+	IsAdmin    bool   `json:"is_admin"`
+	UID        string `json:"uid"`
 }
-
 
 func GetUserFromSession(c *gin.Context) (error, *Session) {
 	sessionid, _ := c.Cookie("SESSION")
@@ -70,11 +69,9 @@ func GetSessionKey(username string) string {
 	return SessionKey + username
 }
 
-
 func (s *Session) IsAdmin() bool {
 	return s.IsAdmin
 }
-
 
 // session信息存储到redis
 func (s *Session) Store() error {
@@ -118,4 +115,3 @@ func DelSession(username string) error {
 
 	return nil
 }
-

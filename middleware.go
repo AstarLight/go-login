@@ -1,6 +1,6 @@
 package main
 
-//必须登录的请求，从session读user写入context 
+//必须登录的请求，从session读user写入context
 func NeedLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		err, user := GetUserFromSession(c)

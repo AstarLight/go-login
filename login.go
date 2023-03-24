@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
+// 登录
 func SignIn(c *gin.Context) error {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
@@ -60,6 +60,7 @@ func GetCtxUser(c *gin.Context) *User {
 	return c.Value("user").(*User)
 }
 
+// 登出
 func SignOut(c *gin.Context) {
 	user := GetCtxUser(c)
 	if user == nil {
@@ -156,7 +157,7 @@ func SignUp(c *gin.Context) {
 
 // 忘记密码
 func ForgetPasswd(c *gin.Context) {
-
+	// 给用户邮箱发一封重置密码的邮件，里面有code。用户填入CODE+new passwd
 
 }
 

@@ -5,8 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 func main() {
+	InitConf()
+	DbInit()
 
 	r := gin.Default()
 
@@ -21,7 +22,6 @@ func main() {
 	r.POST("/sign_up", SignUp)
 	r.POST("/forget_passwd", ForgetPasswd)
 
-
 	// needlogin
 	needlogin := r.Group("/user")
 	needlogin.Use(NeedLogin())
@@ -34,7 +34,7 @@ func main() {
 
 	}
 
-	fmt.Printf("server run, listen port %s", 9999)
-	r.Run(":9999")
+	fmt.Printf("server run, listen port %s", conf.ListenPort)
+	r.Run(":" + string(conf.ListenPort))
 
 }
