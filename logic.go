@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
+	"strings"
 )
 
 // 登录
@@ -181,10 +182,13 @@ func UpdatePasswd(c *gin.Context) {
 	c.Redirect(http.StatusFound, Conf.Common.HomePage)
 }
 
-func HomePage(c *gin.Context) {
 
+func GetTemplate(c *gin.Context) {
+	path := c.Request.URL.Path
+	arr := strings.Split(path, "/")
+	html := arr[len(arr)-1]
+	c.HTML(http.StatusOK, html, nil)
 }
 
-func LoginPage(c *gin.Context) {
 
-}
+

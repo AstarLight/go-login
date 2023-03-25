@@ -4,10 +4,11 @@ title = "go-login config file"
 ListenPort = 7788
 EnableRedisCache = false
 EnableLocalCache = false
-MinPasswordLength = 20
+MinPasswordLength = 8
 MaxUsernameLen = 32
-HomePage = "/home"
-LoginPage = "/login"
+HomePage = "home.html"
+LoginPage = "login.html"
+RegistPage = "regist.html"
 PasswordComplexitys = ["lower", "upper", "digit", "spec"]
 
 

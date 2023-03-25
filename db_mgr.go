@@ -121,6 +121,7 @@ func GetUserFromDbByName(user *User) (bool, error) {
 func DBInsertNewUser(user *User) error {
 	affected, err := MasterDB.Insert(user)
 	if err != nil {
+		fmt.Println("DBInsertNewUser err ", err)
 		return err
 	}
 	if affected == 0 {
@@ -144,14 +145,14 @@ func DBUpdateUser(updates map[string]interface{}) error {
 
 // UserExists 判断用户是否存在
 func UserExists(field, val string) bool {
-
+	fmt.Println(field, val)
 	user := &User{}
 	has, err := MasterDB.Where(field+"=?", val).Get(user)
-	if err != nil || user.ID == 0 || !has {
+	if err != nil || user.ID == 0 {
 		if err != nil {
 			fmt.Println("user logic UserExists error:", err)
 		}
 		return false
 	}
-	return true
+	return has
 }

@@ -36,6 +36,7 @@ type CommonConfig struct {
 	MaxUsernameLen     int
 	HomePage           string
 	LoginPage          string
+	RegistPage          string
 	PasswordComplexity []string
 }
 

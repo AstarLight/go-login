@@ -14,13 +14,16 @@ func main() {
 	RedisInit()
 
 	r := gin.Default()
+	r.LoadHTMLGlob("template/*")
 
 	//no login
 	r.Use(CommonRateLimit()) // 频率控制
 	r.Use(CommonBlacklist()) // 黑名单
 
-	r.GET("/home_page", HomePage)
-	r.GET("/login_page", LoginPage)
+	r.GET("/enter.html", GetTemplate)
+	r.GET("/home.html", GetTemplate)
+	r.GET("/login.html", GetTemplate)
+	r.GET("/regist.html", GetTemplate)
 
 	r.POST("/sign_in", SignIn)             // 登录
 	r.POST("/sign_up", SignUp)             // 注册
