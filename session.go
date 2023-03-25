@@ -1,20 +1,36 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 	"time"
 )
 
 // 鉴权，登录态管理
 
-const (
-	SessionTTL = 15 * 60
-	SessionKey = "sess_"
+var (
+	ctx     = context.Background()
+	RedisDb *redis.Client
 )
+
+func RedisInit() {
+	RedisDb = redis.NewClient(&redis.Options{
+		Addr: Conf.Redis.Addr,
+	})
+
+	pong, err := RedisDb.Ping(ctx).Result()
+	if err != nil {
+		panic(fmt.Sprintf("connect redis fail: %v", err))
+	} else {
+		fmt.Println("connect redis succ,", pong)
+	}
+
+}
 
 // session 登录态管理
 type Session struct {
@@ -22,7 +38,7 @@ type Session struct {
 	Username   string `json:"username"`
 	CreateTime int64  `json:"create_time"`
 	IsAdmin    bool   `json:"is_admin"`
-	UID        string `json:"uid"`
+	UID        int64  `json:"uid"`
 }
 
 func GetUserFromSession(c *gin.Context) (error, *Session) {
@@ -66,10 +82,10 @@ func GetSession(username string) *Session {
 }
 
 func GetSessionKey(username string) string {
-	return SessionKey + username
+	return Conf.Session.Key + username
 }
 
-func (s *Session) IsAdmin() bool {
+func (s *Session) IsAdminUser() bool {
 	return s.IsAdmin
 }
 
@@ -77,7 +93,7 @@ func (s *Session) IsAdmin() bool {
 func (s *Session) Store() error {
 	key := GetSessionKey(s.Username)
 	jdata, _ := json.Marshal(s)
-	err := RedisDb.Set(ctx, key, string(jdata), SessionTTL*time.Second).Err()
+	err := RedisDb.Set(ctx, key, string(jdata), time.Duration(Conf.Session.TTL)*time.Second).Err()
 	if err != nil {
 		fmt.Printf("redis set fail %v\n", err)
 		return err

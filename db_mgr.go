@@ -1,11 +1,13 @@
 package main
 
 import (
-	"database/sql"
+	//"database/sql"
+	"bytes"
 	"errors"
 	"fmt"
-
 	_ "github.com/go-sql-driver/mysql"
+	"io/ioutil"
+	"time"
 	"xorm.io/xorm"
 	"xorm.io/xorm/log"
 )
@@ -16,43 +18,45 @@ var (
 	ConnectDBErr = errors.New("connect db error")
 	UseDBErr     = errors.New("use db error")
 
-	WriteDBErr = errors.New("write but affect zero row")
+	WriteDBErr = errors.New("write but affect no row")
 )
 
 func DbInit() {
-	mysqlConfig, err := ConfigFile.GetSection("mysql")
-	if err != nil {
-		fmt.Println("get mysql config error:", err)
-		return
-	}
-
 	// 启动时就打开数据库连接
-	if err = initEngine(); err != nil {
+	if err := initEngine(); err != nil {
 		panic(err)
 	}
 
 	// 测试数据库连接是否 OK
-	if err = MasterDB.Ping(); err != nil {
+	if err := MasterDB.Ping(); err != nil {
 		panic(err)
+	}
+
+	// user表不存在，则先建表
+	if !IsTableExist() {
+		err := CreateTable()
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
 func initEngine() error {
 	var err error
 
-	MasterDB, err = xorm.NewEngine("mysql", "lijunshi:lijunshipwd@tcp(10.10.40.231:3306)/users")
+	MasterDB, err = xorm.NewEngine("mysql", Conf.MySQL.Addr)
 	if err != nil {
 		return err
 	}
 
-	maxIdle := ConfigFile.MustInt("mysql", "max_idle", 2)
-	maxConn := ConfigFile.MustInt("mysql", "max_conn", 10)
+	maxIdle := Conf.MySQL.MaxIdle
+	maxConn := Conf.MySQL.MaxConn
 
 	MasterDB.SetMaxIdleConns(maxIdle)
 	MasterDB.SetMaxOpenConns(maxConn)
 
-	showSQL := ConfigFile.MustBool("xorm", "show_sql", false)
-	logLevel := ConfigFile.MustInt("xorm", "log_level", 1)
+	showSQL := Conf.MySQL.ShowSQL
+	logLevel := Conf.MySQL.LogLevel
 
 	MasterDB.ShowSQL(showSQL)
 	MasterDB.Logger().SetLevel(log.LogLevel(logLevel))
@@ -73,13 +77,13 @@ func IsTableExist() bool {
 	return true
 }
 
-func (InstallLogic) CreateTable() error {
+func CreateTable() error {
 
-	dbFile := config.ROOT + "/config/db.sql"
+	dbFile := Conf.SQL.File
 	buf, err := ioutil.ReadFile(dbFile)
 
 	if err != nil {
-		objLog.Errorln("create table, read db file error:", err)
+		fmt.Println("create table, read db file error:", err)
 		return err
 	}
 
@@ -96,6 +100,8 @@ func (InstallLogic) CreateTable() error {
 		if err1 != nil {
 			fmt.Println("create table error:", err1)
 			err = err1
+		} else {
+			fmt.Println("create table succ, sql=", strSql)
 		}
 	}
 
@@ -103,27 +109,17 @@ func (InstallLogic) CreateTable() error {
 }
 
 func GetUserFromDbByName(user *User) (bool, error) {
-	has, err := MasterDB.Where("Name=?", user.Name).Get(user)
+	has, err := MasterDB.Where("name=?", user.Name).Get(user)
 	if err != nil {
-		// 发生错误，认为已经创建了
 		return false, err
 	}
 
 	return has, nil
 }
 
-func GetUserFromDbByID(user *User) (bool, error) {
-	has, err := MasterDB.Where("ID=?", user.ID).Get(user)
-	if err != nil {
-		// 发生错误，认为已经创建了
-		return false, err
-	}
-
-	return has, nil
-}
-
-func DbInsertNewUser(user *User) error {
-	affected, err := engine.Insert(user)
+// 向数据库插入一个新用户数据
+func DBInsertNewUser(user *User) error {
+	affected, err := MasterDB.Insert(user)
 	if err != nil {
 		return err
 	}
@@ -133,8 +129,9 @@ func DbInsertNewUser(user *User) error {
 	return nil
 }
 
-func DbUpdateUser(updates map[string]interface{}) error {
-	affected, err := engine.Table("user").Update(updates)
+func DBUpdateUser(updates map[string]interface{}) error {
+	updates["UpdatedUnix"] = time.Now().Unix()
+	affected, err := MasterDB.Table("user").Update(updates)
 	if err != nil {
 		return err
 	}
@@ -152,7 +149,7 @@ func UserExists(field, val string) bool {
 	has, err := MasterDB.Where(field+"=?", val).Get(user)
 	if err != nil || user.ID == 0 || !has {
 		if err != nil {
-			objLog.Errorln("user logic UserExists error:", err)
+			fmt.Println("user logic UserExists error:", err)
 		}
 		return false
 	}

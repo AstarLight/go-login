@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
-	"xorm.io/xorm"
 )
 
 type User struct {
@@ -18,12 +18,11 @@ type User struct {
 	UpdatedUnix   int64 `xorm:"INDEX updated"` // 账号更新时间
 	LastLoginUnix int64 `xorm:"INDEX"`         // 账号上次登录时间
 
-	IsAdmin bool // 管理员标记
+	IsAdmin bool `xorm:"NOT NULL DEFAULT false"` // 管理员标记
 
 	ProhibitLogin bool `xorm:"NOT NULL DEFAULT false"` // 禁止登录标记
 
-	LoginIp   string `xorm:"VARCHAR(32)"`
-	LoginTime int64  `xorm:"VARCHAR(32)"`
+	LastLoginIp string `xorm:"VARCHAR(32) INDEX"`
 }
 
 func CreateUser(username, password, email string) *User {
@@ -90,5 +89,5 @@ func SetUserToRedis(user *User) error {
 }
 
 func SetUserToLocal(user *User) error {
-	return false, nil
+	return nil
 }

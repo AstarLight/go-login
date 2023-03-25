@@ -1,9 +1,30 @@
-listen_port = 7788
+title = "go-login config file"
+
+[Common]
+ListenPort = 7788
+EnableRedisCache = false
+EnableLocalCache = false
+MinPasswordLength = 20
+MaxUsernameLen = 32
+HomePage = "/home"
+LoginPage = "/login"
+PasswordComplexitys = ["lower", "upper", "digit", "spec"]
 
 
 
-[redis]
-addr = "10.10.40.231:6379" # redis
+[Redis]
+Addr = "localhost:6379" # redis
 
-[mysql]
-addr = "lijunshi:lijunshipwd@tcp(10.10.40.231:3306)/users"
+[MySQL]
+Addr = "lijunshi:lijunshipwd@tcp(localhost:3306)/users"
+MaxIdle = 2
+MaxConn = 10
+ShowSQL = false
+LogLevel = 1
+
+[Session]
+TTL = 900
+Key = "sess_"
+
+[SQL]
+File = "./db.sql"

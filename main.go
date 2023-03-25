@@ -6,35 +6,39 @@ import (
 )
 
 func main() {
-	InitConf()
+	// 配置初始化
+	ConfInit()
+	// 数据库初始化
 	DbInit()
+	//redis初始化
+	RedisInit()
 
 	r := gin.Default()
 
 	//no login
-	r.Use(CommonRateLimit())
-	r.Use(CommonBlacklist())
+	r.Use(CommonRateLimit()) // 频率控制
+	r.Use(CommonBlacklist()) // 黑名单
 
 	r.GET("/home_page", HomePage)
 	r.GET("/login_page", LoginPage)
 
-	r.POST("/sign_in", SignIn)
-	r.POST("/sign_up", SignUp)
-	r.POST("/forget_passwd", ForgetPasswd)
+	r.POST("/sign_in", SignIn)             // 登录
+	r.POST("/sign_up", SignUp)             // 注册
+	r.POST("/forget_passwd", ForgetPasswd) // 忘记密码
 
-	// needlogin
+	// needlogin 以下接口需要登录态才可访问
 	needlogin := r.Group("/user")
 	needlogin.Use(NeedLogin())
 	needlogin.Use(UIDRateLimit())
 	needlogin.Use(UIDBlacklist())
 	{
-		// 管理员接口
-		needlogin.POST("/update_passwd", UpdatePasswd)
-		needlogin.POST("/sign_out", SignOut)
+		needlogin.POST("/update_passwd", UpdatePasswd) // 更新密码
+		needlogin.POST("/sign_out", SignOut)           // 登出
 
 	}
 
-	fmt.Printf("server run, listen port %s", conf.ListenPort)
-	r.Run(":" + string(conf.ListenPort))
+	sPort := fmt.Sprintf("%d", Conf.Common.ListenPort)
+	fmt.Printf("server run, listen port %s", sPort)
+	r.Run(":" + sPort)
 
 }

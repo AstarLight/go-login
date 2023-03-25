@@ -1,5 +1,10 @@
 package main
 
+import (
+	"context"
+	"github.com/gin-gonic/gin"
+)
+
 //必须登录的请求，从session读user写入context
 func NeedLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -22,27 +27,31 @@ func NeedLogin() gin.HandlerFunc {
 //限流，粒度分为IP,MAC-ADDR
 func CommonRateLimit() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
+		c.Next()
+		return
 	}
 }
 
 //黑名单,限流，粒度分为IP,MAC-ADDR
 func CommonBlacklist() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
+		c.Next()
+		return
 	}
 }
 
 //限流，粒度分为UID
 func UIDRateLimit() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
+		c.Next()
+		return
 	}
 }
 
 //黑名单,限流，粒度分为UID
 func UIDBlacklist() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
+		c.Next()
+		return
 	}
 }

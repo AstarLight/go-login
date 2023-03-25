@@ -1,5 +1,13 @@
 package main
 
+import (
+	"crypto/md5"
+	"encoding/hex"
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"time"
+)
+
 func GenMD5WithSalt(passwd, salt string) string {
 	s := passwd + "::" + salt
 	md5Hash := md5.New()
