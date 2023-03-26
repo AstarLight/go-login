@@ -13,15 +13,13 @@ func SignIn(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	err := IsValidName(username)
-	if err != nil {
-		WriteResponseWithCode(c, err.Error(), nil, 0)
+	if len(username) <= 0 {
+		WriteResponseWithCode(c, "请填入用户名", nil, 0)
 		return
 	}
 
-	err = IsValidPasswd(password)
-	if err != nil {
-		WriteResponseWithCode(c, err.Error(), nil, 0)
+	if len(password) <= 0 {
+		WriteResponseWithCode(c, "请填入密码", nil, 0)
 		return
 	}
 
@@ -70,7 +68,11 @@ func SignIn(c *gin.Context) {
 }
 
 func GetCtxUser(c *gin.Context) *Session {
-	return c.Value("user").(*Session)
+	sess, exist := c.Get("USER")
+	if !exist {
+		return nil
+	}
+	return sess.(*Session)
 }
 
 // 登出
@@ -92,7 +94,7 @@ func SignOut(c *gin.Context) {
 	c.SetCookie("USERNAME", "", 0, "", "", false, true)
 	c.SetCookie("UID", "", 0, "", "", false, true)
 
-	c.Redirect(http.StatusFound, Conf.Common.HomePage)
+	c.Redirect(http.StatusFound, Conf.Common.EnterPage)
 }
 
 // 注册
@@ -154,13 +156,21 @@ func ForgetPasswd(c *gin.Context) {
 
 // 更新密码
 func UpdatePasswd(c *gin.Context) {
-	user := GetCtxUser(c)
-	if user == nil {
+	sess := GetCtxUser(c)
+	if sess == nil {
 		WriteResponseWithCode(c, "尚未登录", nil, 0)
 		return
 	}
 
+	retryPassword := c.PostForm("retry_password")
 	password := c.PostForm("password")
+
+	
+	if retryPassword != password {
+		WriteResponseWithCode(c, "两次输入的密码不一致", nil, 0)
+		return
+	}
+
 
 	err := IsValidPasswd(password)
 	if err != nil {
@@ -168,8 +178,16 @@ func UpdatePasswd(c *gin.Context) {
 		return
 	}
 
+	var user User
+	user.Name = sess.Username
+	has, err := GetUserFromDbByName(&user)
+	if err != nil || !has {
+		WriteResponseWithCode(c, "用户不存在", nil, 0)
+		return
+	} 
+
 	var updates = map[string]interface{}{
-		"passwd": password,
+		"passwd": GenMD5WithSalt(password, user.Salt),
 	}
 
 	err = DBUpdateUser(updates)

@@ -131,7 +131,7 @@ func DBInsertNewUser(user *User) error {
 }
 
 func DBUpdateUser(updates map[string]interface{}) error {
-	updates["UpdatedUnix"] = time.Now().Unix()
+	updates["updated_unix"] = time.Now().Unix()
 	affected, err := MasterDB.Table("user").Update(updates)
 	if err != nil {
 		return err
@@ -148,7 +148,7 @@ func UserExists(field, val string) bool {
 	fmt.Println(field, val)
 	user := &User{}
 	has, err := MasterDB.Where(field+"=?", val).Get(user)
-	if err != nil || user.ID == 0 {
+	if err != nil || user.Uid == 0 {
 		if err != nil {
 			fmt.Println("user logic UserExists error:", err)
 		}

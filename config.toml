@@ -9,6 +9,7 @@ MaxUsernameLen = 32
 HomePage = "home.html"
 LoginPage = "login.html"
 RegistPage = "regist.html"
+EnterPage = "enter.html"
 PasswordComplexitys = ["lower", "upper", "digit", "spec"]
 
 

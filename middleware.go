@@ -1,23 +1,26 @@
 package main
 
 import (
-	"context"
 	"github.com/gin-gonic/gin"
+	"fmt"
+	//"net/http"
 )
 
 //必须登录的请求，从session读user写入context
 func NeedLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		err, user := GetUserFromSession(c)
-		if err == nil && user != nil {
-			context.WithValue(c, "user", user)
-			user.Store() // 已登录，每次请求都会续期
+		err, sess := GetUserFromSession(c)
+		if err == nil && sess != nil {
+			fmt.Println("NeedLogin in login, ", sess)
+			c.Set("USER", sess)
+			sess.Store() // 已登录，每次请求都会续期
 			c.Next()
 			return
 
 		} else {
 			// 未登录
 			WriteResponseWithCode(c, "未登录", nil, 429)
+			//c.Redirect(http.StatusFound, Conf.Common.EnterPage)
 			c.Abort()
 			return
 		}

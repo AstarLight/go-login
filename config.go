@@ -34,6 +34,7 @@ type CommonConfig struct {
 	EnableLocalCache   bool
 	MinPasswordLength  int
 	MaxUsernameLen     int
+	EnterPage string
 	HomePage           string
 	LoginPage          string
 	RegistPage          string

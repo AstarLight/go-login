@@ -14,7 +14,8 @@ func main() {
 	RedisInit()
 
 	r := gin.Default()
-	r.LoadHTMLGlob("template/*")
+	r.LoadHTMLGlob("template/*.html")
+	r.Static("/static", "./static")
 
 	//no login
 	r.Use(CommonRateLimit()) // 频率控制
@@ -37,6 +38,8 @@ func main() {
 	{
 		needlogin.POST("/update_passwd", UpdatePasswd) // 更新密码
 		needlogin.POST("/sign_out", SignOut)           // 登出
+
+		needlogin.GET("/update_password_page.html", GetTemplate)
 
 	}
 

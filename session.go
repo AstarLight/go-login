@@ -38,7 +38,7 @@ type Session struct {
 	Username   string `json:"username"`
 	CreateTime int64  `json:"create_time"`
 	IsAdmin    bool   `json:"is_admin"`
-	UID        int64  `json:"uid"`
+	UID     int64  `json:"uid"`
 }
 
 func GetUserFromSession(c *gin.Context) (error, *Session) {
@@ -61,7 +61,7 @@ func NewSession(user *User) *Session {
 	newSession.Username = user.Name
 	newSession.ID = uuid.New().String()
 	newSession.CreateTime = now.Unix()
-	newSession.UID = user.ID
+	newSession.UID = user.Uid
 	newSession.IsAdmin = user.IsAdmin
 	return &newSession
 }
