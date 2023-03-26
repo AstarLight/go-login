@@ -14,13 +14,14 @@ func main() {
 	RedisInit()
 
 	r := gin.Default()
-	r.LoadHTMLGlob("template/*.html")
-	r.Static("/static", "./static")
+	r.LoadHTMLGlob("./template/*.html")
+	r.Static("/assets/bootstrap", "./assets/bootstrap")
 
 	//no login
 	r.Use(CommonRateLimit()) // 频率控制
 	r.Use(CommonBlacklist()) // 黑名单
 
+	r.GET("/admin_login.html", GetTemplate)
 	r.GET("/enter.html", GetTemplate)
 	r.GET("/home.html", GetTemplate)
 	r.GET("/login.html", GetTemplate)
