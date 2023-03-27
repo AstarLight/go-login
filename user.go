@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"math/rand"
 	"time"
 )
 
@@ -33,7 +31,7 @@ func CreateUser(username, password, email string) *User {
 	newUser := User{}
 	newUser.Email = email
 	newUser.Name = username
-	newUser.Salt = fmt.Sprintf("%x", rand.Int31())
+	newUser.Salt = GenRandomSalt()
 	newUser.Passwd = GenMD5WithSalt(password, newUser.Salt)
 	newUser.CreatedUnix = time.Now().Unix()
 	newUser.UpdatedUnix = time.Now().Unix()

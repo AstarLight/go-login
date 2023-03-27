@@ -5,6 +5,8 @@ import (
 	"math/big"
 	"strings"
 	"sync"
+	"fmt"
+	mrand "math/rand"
 )
 
 // complexity contains information about a particular kind of password complexity
@@ -93,4 +95,15 @@ func Generate(n int) (string, error) {
 		buffer[j] = validChars[rnd.Int64()]
 	}
 	return string(buffer), nil
+}
+
+func GenRandomSalt() string {
+	salt, err := Generate(8)
+	if err != nil {
+		fmt.Println("GenRandomSalt err ", err)
+		return fmt.Sprintf("%x", mrand.Int31())
+	}
+
+	return salt
+
 }
