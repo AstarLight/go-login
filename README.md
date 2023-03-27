@@ -8,9 +8,9 @@
 - viper管理配置文件
 - gin为web server框架
 
-![登录页面](https://cdn.nlark.com/yuque/0/2023/png/21659032/1679928836576-45a76f0f-560f-4a86-ab01-92b38871734c.png)
-![注册](https://cdn.nlark.com/yuque/0/2023/png/21659032/1679924455183-02dfad98-c0b0-4769-8aad-5094fa3bcd4c.png?x-oss-process=image%2Fresize%2Cw_445%2Climit_0)
-![注册]([https://cdn.nlark.com/yuque/0/2023/png/21659032/1679924455183-02dfad98-c0b0-4769-8aad-5094fa3bcd4c.png?x-oss-process=image%2Fresize%2Cw_445%2Climit_0](https://cdn.nlark.com/yuque/0/2023/png/21659032/1679924345725-bdc24433-ccb9-4ba3-aad3-abe04b60be6b.png?x-oss-process=image%2Fresize%2Cw_582%2Climit_0))
-![注册]([https://cdn.nlark.com/yuque/0/2023/png/21659032/1679924455183-02dfad98-c0b0-4769-8aad-5094fa3bcd4c.png?x-oss-process=image%2Fresize%2Cw_445%2Climit_0](https://cdn.nlark.com/yuque/0/2023/png/21659032/1679924345725-bdc24433-ccb9-4ba3-aad3-abe04b60be6b.png?x-oss-process=image%2Fresize%2Cw_582%2Climit_0))
+![登录页面](./images/3.png)
+![注册页面](./images/5.png)
+![注册页面跳转](./images/4.png)
+![主页](./images/1.png)
 
-![注册]([https://cdn.nlark.com/yuque/0/2023/png/21659032/1679924455183-02dfad98-c0b0-4769-8aad-5094fa3bcd4c.png?x-oss-process=image%2Fresize%2Cw_445%2Climit_0](https://cdn.nlark.com/yuque/0/2023/png/21659032/1679924345725-bdc24433-ccb9-4ba3-aad3-abe04b60be6b.png?x-oss-process=image%2Fresize%2Cw_582%2Climit_0))
+![修改页码页面](./images/2.png)
