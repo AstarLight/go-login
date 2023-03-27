@@ -38,7 +38,7 @@ type Session struct {
 	Username   string `json:"username"`
 	CreateTime int64  `json:"create_time"`
 	IsAdmin    bool   `json:"is_admin"`
-	UID     int64  `json:"uid"`
+	UID        int64  `json:"uid"`
 }
 
 func GetUserFromSession(c *gin.Context) (error, *Session) {

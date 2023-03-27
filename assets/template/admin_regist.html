@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <title>更新密码页面</title>
+    <title>注册页面</title>
     <link rel="shortcut icon" type="image/x-icon" href="/assets/bootstrap/favicon.ico">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
@@ -46,8 +46,20 @@
 
 <body class="center-vh">
 <div class="card card-shadowed p-5 w-420 mb-0 mr-2 ml-2">
-    <h1>修改密码</h1>
+    <div class="text-center mb-3">
+        <img src="/assets/bootstrap/images/logo-sidebar.png">
+    </div>
     <form class="login-form">
+        <div class="form-group has-feedback">
+            <span class="mdi mdi-account" aria-hidden="true"></span>
+            <input type="text" class="form-control" id="username" placeholder="用户名">
+        </div>
+
+        <div class="form-group has-feedback">
+            <span class="mdi mdi-account" aria-hidden="true"></span>
+            <input type="text" class="form-control" id="email" placeholder="邮箱地址">
+        </div>
+
         <div class="form-group has-feedback">
             <span class="mdi mdi-lock" aria-hidden="true"></span>
             <input type="password" class="form-control" id="password" placeholder="密码">
@@ -59,7 +71,11 @@
         </div>
 
         <div class="form-group">
-            <button class="btn btn-block btn-primary" id="btnOk" type="button">更新密码</button>
+            <button class="btn btn-block btn-primary" id="btnOk" type="button">立即注册</button>
+        </div>
+        <div class="login-another">
+            <span>已有账号？去登陆</span>
+            <a href="/admin_login.html">立即登录</a>
         </div>
     </form>
 </div>
@@ -70,8 +86,8 @@
 <script type="text/javascript" src="/assets/bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
 <script type="text/javascript">
 
-function JumpHome() {
-    window.open("/user/home.html",'_self');
+function JumpLogin() {
+    window.open("/admin_login.html",'_self');
 }
 
 function AjaxMsg(response) {
@@ -80,12 +96,8 @@ function AjaxMsg(response) {
         errMsg = response.msg;
 
         if (errCode == 0 && errMsg == "") {
-            $.alert({
-            title: '登录成功！',
-            icon: 'mdi mdi-alert',
-            type: 'blue',
-            } );
-            setTimeout(JumpHome,1000);
+            $.alert('注册成功！正在跳转登录页面。。' );
+            setTimeout(JumpLogin,1000);
 
         } else {
             $.alert({
@@ -119,6 +131,16 @@ function AjaxMsg(response) {
         });
 
         $('#btnOk').on('click', function () {
+            const username = $("#username").val();
+            if (username === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入用户名。',
+                });
+                return false;
+            }
 
             const password = $("#password").val();
             if (password === "") {
@@ -142,24 +164,37 @@ function AjaxMsg(response) {
                 return false;
             }
 
+            const email = $("#email").val();
+            if (email === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入邮箱地址',
+                });
+                return false;
+            }
+
             if (retry_password !== password) {
                 $.alert({
                     title: '温馨提示',
                     icon: 'mdi mdi-alert',
                     type: 'orange',
-                    content: '两次输入的密码不一致',
+                    content: '两次密码输入不一致',
                 });
                 return false;
             }
 
             const postData = {
-                retry_password: retry_password,
+                username: username,
                 password: password,
+                retry_password: retry_password,
+                email: email,
             };
 
             AjaxForm(
                 "POST",
-                "/user/update_passwd",
+                "/sign_up",
                 postData,
                 function () {
                 },

@@ -86,11 +86,7 @@ function AjaxMsg(response) {
         errMsg = response.msg;
 
         if (errCode == 0 && errMsg == "") {
-            $.alert({
-            title: '登录成功！正在跳转。。',
-            icon: 'mdi mdi-alert',
-            type: 'blue',
-            } );
+            $.alert('登录成功！正在跳转。。' );
             setTimeout(JumpHome,1000);
 
         } else {

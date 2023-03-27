@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 	"strings"
+	"time"
 )
 
 // 登录
@@ -54,7 +54,7 @@ func SignIn(c *gin.Context) {
 		"last_login_unix": time.Now().Unix(),
 		"last_login_ip":   c.ClientIP(),
 	}
-	err = DBUpdateUser(updates)
+	err = DBUpdateUser(session.Username, updates)
 	if err != nil {
 		fmt.Println("DBUpdateUser err: ", err)
 	}
@@ -148,7 +148,6 @@ func SignUp(c *gin.Context) {
 	WriteResponseWithCode(c, "", nil, 0)
 }
 
-
 // 更新密码
 func UpdatePasswd(c *gin.Context) {
 	sess := GetCtxUser(c)
@@ -160,12 +159,10 @@ func UpdatePasswd(c *gin.Context) {
 	retryPassword := c.PostForm("retry_password")
 	password := c.PostForm("password")
 
-	
 	if retryPassword != password {
 		WriteResponseWithCode(c, "两次输入的密码不一致", nil, 0)
 		return
 	}
-
 
 	err := IsValidPasswd(password)
 	if err != nil {
@@ -179,13 +176,13 @@ func UpdatePasswd(c *gin.Context) {
 	if err != nil || !has {
 		WriteResponseWithCode(c, "用户不存在", nil, 0)
 		return
-	} 
+	}
 
 	var updates = map[string]interface{}{
 		"passwd": GenMD5WithSalt(password, user.Salt),
 	}
 
-	err = DBUpdateUser(updates)
+	err = DBUpdateUser(sess.Username, updates)
 	if err != nil {
 		WriteResponseWithCode(c, "修改密码失败，请重试", nil, 0)
 		return
@@ -195,13 +192,9 @@ func UpdatePasswd(c *gin.Context) {
 	WriteResponseWithCode(c, "", nil, 0)
 }
 
-
 func GetTemplate(c *gin.Context) {
 	path := c.Request.URL.Path
 	arr := strings.Split(path, "/")
 	html := arr[len(arr)-1]
 	c.HTML(http.StatusOK, html, nil)
 }
-
-
-

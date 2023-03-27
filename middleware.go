@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	//"net/http"
 )
 
@@ -27,33 +27,70 @@ func NeedLogin() gin.HandlerFunc {
 	}
 }
 
-//限流，粒度分为IP,MAC-ADDR
+func IsBlackIP(IP string) bool {
+	for _, ip := range Conf.Blacklist.IPList {
+		if ip == IP {
+			return true
+		}
+	}
+
+	return false
+}
+
+func IsBlackUsername(username string) bool {
+	for _, uname := range Conf.Blacklist.UsernameList {
+		if username == uname {
+			return true
+		}
+	}
+
+	return false
+}
+
+
+//限流，粒度分为IP
 func CommonRateLimit() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		
 		c.Next()
 		return
 	}
 }
 
-//黑名单,限流，粒度分为IP,MAC-ADDR
+//黑名单,限流，粒度分为IP
 func CommonBlacklist() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		clientIP := c.ClientIP()
+		if IsBlackIP(clientIP) {
+			WriteResponseWithCode(c, "禁止访问", nil, 403)
+			c.Abort()
+			return
+		}
 		c.Next()
 		return
 	}
 }
 
 //限流，粒度分为UID
-func UIDRateLimit() gin.HandlerFunc {
+func UserRateLimit() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		c.Next()
 		return
 	}
 }
 
 //黑名单,限流，粒度分为UID
-func UIDBlacklist() gin.HandlerFunc {
+func UserBlacklist() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		sess := GetCtxUser(c)
+		if sess != nil {
+			if IsBlackUsername(sess.Username) {
+				WriteResponseWithCode(c, "禁止访问", nil, 403)
+				c.Abort()
+				return
+			}
+		}
 		c.Next()
 		return
 	}

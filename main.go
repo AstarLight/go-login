@@ -3,7 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"math/rand"
+	"time"
 )
+
+func init() {
+	// 设置随机数种子
+	rand.Seed(time.Now().Unix())
+}
 
 func main() {
 	// 配置初始化
@@ -14,9 +21,8 @@ func main() {
 	RedisInit()
 
 	r := gin.Default()
-	r.LoadHTMLGlob("./template/*.html")
+	r.LoadHTMLGlob("./assets/template/*.html")
 	r.Static("/assets/bootstrap", "./assets/bootstrap")
-	r.Static("/static", "./static")
 
 	//no login
 	r.Use(CommonRateLimit()) // 频率控制
@@ -25,11 +31,9 @@ func main() {
 	r.GET("/admin_login.html", GetTemplate)
 	r.GET("/admin_regist.html", GetTemplate)
 	r.GET("/login_regist.html", GetTemplate)
-	r.GET("/login.html", GetTemplate)
-	r.GET("/regist.html", GetTemplate)
 
-	r.POST("/sign_in", SignIn)             // 登录
-	r.POST("/sign_up", SignUp)             // 注册
+	r.POST("/sign_in", SignIn) // 登录
+	r.POST("/sign_up", SignUp) // 注册
 
 	// needlogin 以下接口需要登录态才可访问
 	needlogin := r.Group("/user")
@@ -37,11 +41,10 @@ func main() {
 	needlogin.Use(UIDRateLimit())
 	needlogin.Use(UIDBlacklist())
 	{
-		needlogin.GET("/home.html", GetTemplate) // 用户首页
-		needlogin.POST("/update_passwd", UpdatePasswd) // 更新密码
-		needlogin.POST("/sign_out", SignOut)           // 登出
-
-		needlogin.GET("/update_password_page.html", GetTemplate)
+		needlogin.GET("/update_password_page.html", GetTemplate) // 更新密码页
+		needlogin.GET("/home.html", GetTemplate)                 // 用户首页
+		needlogin.POST("/update_passwd", UpdatePasswd)           // 更新密码
+		needlogin.POST("/sign_out", SignOut)                     // 登出
 
 	}
 

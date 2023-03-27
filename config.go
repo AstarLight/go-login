@@ -28,16 +28,21 @@ type SqlConfig struct {
 	File string
 }
 
+type BlacklistConfig struct {
+	IPList []string
+	UsernameList []string
+}
+
 type CommonConfig struct {
 	ListenPort         int
 	EnableRedisCache   bool
 	EnableLocalCache   bool
 	MinPasswordLength  int
 	MaxUsernameLen     int
-	EnterPage string
+	EnterPage          string
 	HomePage           string
 	LoginPage          string
-	RegistPage          string
+	RegistPage         string
 	PasswordComplexity []string
 }
 
@@ -48,6 +53,7 @@ type Config struct {
 	SQL     SqlConfig
 	Session SessionConfig
 	Common  CommonConfig
+	Blacklist BlacklistConfig
 }
 
 func ConfInit() {

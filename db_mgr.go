@@ -130,9 +130,9 @@ func DBInsertNewUser(user *User) error {
 	return nil
 }
 
-func DBUpdateUser(updates map[string]interface{}) error {
+func DBUpdateUser(username string, updates map[string]interface{}) error {
 	updates["updated_unix"] = time.Now().Unix()
-	affected, err := MasterDB.Table("user").Update(updates)
+	affected, err := MasterDB.Table("user").Where("name=?", username).Update(updates)
 	if err != nil {
 		return err
 	}
