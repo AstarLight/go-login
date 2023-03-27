@@ -19,7 +19,7 @@ func NeedLogin() gin.HandlerFunc {
 
 		} else {
 			// 未登录
-			WriteResponseWithCode(c, "未登录", nil, 429)
+			WriteResponseWithCode(c, "未登录", nil, http.StatusTooManyRequests)
 			//c.Redirect(http.StatusFound, Conf.Common.EnterPage)
 			c.Abort()
 			return
@@ -46,7 +46,6 @@ func IsBlackUsername(username string) bool {
 
 	return false
 }
-
 
 //限流，粒度分为IP
 func CommonRateLimit() gin.HandlerFunc {

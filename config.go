@@ -29,8 +29,14 @@ type SqlConfig struct {
 }
 
 type BlacklistConfig struct {
-	IPList []string
+	IPList       []string
 	UsernameList []string
+}
+
+type LimitCountConfig struct {
+	Limit     int
+	Mode      string
+	KeyPrefix string
 }
 
 type CommonConfig struct {
@@ -48,12 +54,13 @@ type CommonConfig struct {
 
 // 读取配置文件config
 type Config struct {
-	Redis   RedisConfig
-	MySQL   MySQLConfig
-	SQL     SqlConfig
-	Session SessionConfig
-	Common  CommonConfig
+	Redis     RedisConfig
+	MySQL     MySQLConfig
+	SQL       SqlConfig
+	Session   SessionConfig
+	Common    CommonConfig
 	Blacklist BlacklistConfig
+	RateLimit LimitCountConfig
 }
 
 func ConfInit() {

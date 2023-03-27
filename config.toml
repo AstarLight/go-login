@@ -15,10 +15,10 @@ PasswordComplexitys = ["lower", "upper", "digit", "spec"]
 
 
 [Redis]
-Addr = "10.10.40.231:6379" # redis
+Addr = "localhost:6379" # redis
 
 [MySQL]
-Addr = "lijunshi:lijunshipwd@tcp(10.10.40.231:3306)/users"
+Addr = "lijunshi:lijunshipwd@tcp(localhost:3306)/users"
 MaxIdle = 2
 MaxConn = 10
 ShowSQL = false
@@ -34,3 +34,8 @@ File = "./db.sql"
 [Blacklist]
 IPList = ["10.10.40.12", "10.10.40.13"]
 UsernameList = ["lijunshi22", ]
+
+[RateLimit]
+KeyPrefix = "Ratelimit-"
+Limit = 10 # 一分钟限制的请求数
+Mode = "redis"

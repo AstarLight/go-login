@@ -18,7 +18,7 @@ var (
 	RedisDb *redis.Client
 )
 
-func RedisInit() {
+func SessionInit() {
 	RedisDb = redis.NewClient(&redis.Options{
 		Addr: Conf.Redis.Addr,
 	})
@@ -50,6 +50,11 @@ func GetUserFromSession(c *gin.Context) (error, *Session) {
 	sess := GetSession(username)
 	if sess == nil {
 		return errors.New("session not exist"), nil
+	}
+
+	// 带上来的sessionid跟redis存的sessionid不一致
+	if sess.ID != sessionid {
+		return errors.New("session not match"), nil
 	}
 
 	return nil, sess
