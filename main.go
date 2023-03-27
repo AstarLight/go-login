@@ -19,6 +19,8 @@ func main() {
 	DbInit()
 	//redis初始化
 	RedisInit()
+	// 分布式限流器
+	Ratelimitinit()
 
 	r := gin.Default()
 	r.LoadHTMLGlob("./assets/template/*.html")
@@ -38,8 +40,8 @@ func main() {
 	// needlogin 以下接口需要登录态才可访问
 	needlogin := r.Group("/user")
 	needlogin.Use(NeedLogin())
-	needlogin.Use(UIDRateLimit())
-	needlogin.Use(UIDBlacklist())
+	needlogin.Use(UserRateLimit())
+	needlogin.Use(UserBlacklist())
 	{
 		needlogin.GET("/update_password_page.html", GetTemplate) // 更新密码页
 		needlogin.GET("/home.html", GetTemplate)                 // 用户首页

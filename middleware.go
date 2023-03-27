@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	//"net/http"
+	"net/http"
 )
 
 //必须登录的请求，从session读user写入context
@@ -51,7 +51,12 @@ func IsBlackUsername(username string) bool {
 //限流，粒度分为IP
 func CommonRateLimit() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		
+		clientIP := c.ClientIP()
+		if IsReachLimit(clientIP, "ip") {
+			WriteResponseWithCode(c, "访问次数过多", nil, http.StatusTooManyRequests)
+			c.Abort()
+			return
+		}
 		c.Next()
 		return
 	}
@@ -74,7 +79,16 @@ func CommonBlacklist() gin.HandlerFunc {
 //限流，粒度分为UID
 func UserRateLimit() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		sess := GetCtxUser(c)
+		if sess != nil {
+			username := sess.Username
 
+			if IsReachLimit(username, "user") {
+				WriteResponseWithCode(c, "访问次数过多", nil, http.StatusTooManyRequests)
+				c.Abort()
+				return
+			}
+		}
 		c.Next()
 		return
 	}
