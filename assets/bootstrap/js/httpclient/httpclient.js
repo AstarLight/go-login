@@ -53,12 +53,10 @@ function AjaxError(response) {
         }
         return;
     }
-
-    if (IsJson(response.responseText)) {
-        const errInfo = JSON.parse(response.responseText);
-        errCode = errInfo.code;
-        errMsg = errInfo.message;
-    }
+    console.log(response)
+    console.log(response.msg)
+    errCode = response.code;
+    errMsg = response.msg;
 
     $.alert({
         title: '错误提示',

@@ -63,10 +63,9 @@
         <div class="form-group">
             <button class="btn btn-block btn-primary" id="btnOk" type="button">立即登录</button>
         </div>
-        <div class="alert alert-primary" style="text-align: center;" role="alert">
-            默认
-            <span class="mdi mdi-account" aria-hidden="true"></span> admin
-            <span class="mdi mdi-lock" aria-hidden="true"></span> admin
+        <div class="login-another">
+            <span>还没有注册帐号?</span>
+            <a href="/admin_regist.html">立即注册</a>
         </div>
     </form>
 </div>
@@ -76,6 +75,46 @@
 <script type="text/javascript" src="/assets/bootstrap/js/authorization/md5.min.js"></script>
 <script type="text/javascript" src="/assets/bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
 <script type="text/javascript">
+
+function JumpHome() {
+    window.open("/user/home.html",'_self');
+}
+
+function AjaxMsg(response) {
+    if (typeof response == 'object' && response) {
+        errCode = response.code;
+        errMsg = response.msg;
+
+        if (errCode == 0 && errMsg == "") {
+            $.alert({
+            title: '登录成功！正在跳转。。',
+            icon: 'mdi mdi-alert',
+            type: 'blue',
+            } );
+            setTimeout(JumpHome,1000);
+
+        } else {
+            $.alert({
+                title: '错误提示',
+                icon: 'mdi mdi-alert',
+                type: 'red',
+                content: '错误码：' + errCode + '<br/>' + '错误信息：' + errMsg,
+            });
+        }
+    } else {
+        let errCode = response.status;
+        let errMsg = response.responseText;
+
+        $.alert({
+            title: '错误提示',
+            icon: 'mdi mdi-alert',
+            type: 'red',
+            content: '错误码：' + errCode + '<br/>' + '错误信息：' + errMsg,
+        });
+    }
+
+}
+
     $(document).ready(function () {
 
         // 回车触发按钮事件
@@ -110,24 +149,22 @@
 
             const postData = {
                 username: username,
-                password: md5(password),
+                password: password,
             };
 
             AjaxForm(
                 "POST",
-                "/api/login",
+                "/sign_in",
                 postData,
                 function () {
                 },
-                function (data) {
-                    let date = new Date();
-                    date.setTime(date.getTime() + 24 * 60 * 60 * 1000); // 24 * 60 * 60 * 1000 表示 24 小时
-                    $.cookie('_login_token_', data.token, {expires: date});
-
-                    location.href = "/";
-                },
+                // 成功
                 function (response) {
-                    AjaxError(response);
+                    AjaxMsg(response);
+                },
+                // 失败
+                function (response) {
+                    AjaxMsg(response);
                 }
             );
         });

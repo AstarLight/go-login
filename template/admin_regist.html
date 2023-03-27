@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>注册页面</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/bootstrap/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" type="text/css" href="/assets/bootstrap/js/jquery-confirm/jquery-confirm.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/style.min.css">
+
+    <style>
+        .login-form .has-feedback {
+            position: relative;
+        }
+
+        .login-form .has-feedback .form-control {
+            padding-left: 36px;
+        }
+
+        .login-form .has-feedback .mdi {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: auto;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            z-index: 4;
+            color: #dcdcdc;
+            display: block;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .login-form .has-feedback.row .mdi {
+            left: 15px;
+        }
+    </style>
+</head>
+
+<body class="center-vh">
+<div class="card card-shadowed p-5 w-420 mb-0 mr-2 ml-2">
+    <div class="text-center mb-3">
+        <img src="/assets/bootstrap/images/logo-sidebar.png">
+    </div>
+    <form class="login-form">
+        <div class="form-group has-feedback">
+            <span class="mdi mdi-account" aria-hidden="true"></span>
+            <input type="text" class="form-control" id="username" placeholder="用户名">
+        </div>
+
+        <div class="form-group has-feedback">
+            <span class="mdi mdi-account" aria-hidden="true"></span>
+            <input type="text" class="form-control" id="email" placeholder="邮箱地址">
+        </div>
+
+        <div class="form-group has-feedback">
+            <span class="mdi mdi-lock" aria-hidden="true"></span>
+            <input type="password" class="form-control" id="password" placeholder="密码">
+        </div>
+
+        <div class="form-group has-feedback">
+            <span class="mdi mdi-lock" aria-hidden="true"></span>
+            <input type="password" class="form-control" id="retry_password" placeholder="再次输入密码">
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-block btn-primary" id="btnOk" type="button">立即注册</button>
+        </div>
+        <div class="login-another">
+            <span>已有账号？去登陆</span>
+            <a href="/admin_login.html">立即登录</a>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/assets/bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/authorization/md5.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript">
+
+function JumpLogin() {
+    window.open("/admin_login.html",'_self');
+}
+
+function AjaxMsg(response) {
+    if (typeof response == 'object' && response) {
+        errCode = response.code;
+        errMsg = response.msg;
+
+        if (errCode == 0 && errMsg == "") {
+            $.alert({
+            title: '注册成功！正在跳转登录页面。。',
+            icon: 'mdi mdi-alert',
+            type: 'blue',
+            } );
+            setTimeout(JumpLogin,1000);
+
+        } else {
+            $.alert({
+                title: '错误提示',
+                icon: 'mdi mdi-alert',
+                type: 'red',
+                content: '错误码：' + errCode + '<br/>' + '错误信息：' + errMsg,
+            });
+        }
+    } else {
+        let errCode = response.status;
+        let errMsg = response.responseText;
+
+        $.alert({
+            title: '错误提示',
+            icon: 'mdi mdi-alert',
+            type: 'red',
+            content: '错误码：' + errCode + '<br/>' + '错误信息：' + errMsg,
+        });
+    }
+
+}
+
+    $(document).ready(function () {
+
+        // 回车触发按钮事件
+        $(document).keyup(function (event) {
+            if (event.keyCode === 13) {
+                $("#btnOk").trigger("click");
+            }
+        });
+
+        $('#btnOk').on('click', function () {
+            const username = $("#username").val();
+            if (username === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入用户名。',
+                });
+                return false;
+            }
+
+            const password = $("#password").val();
+            if (password === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入密码。',
+                });
+                return false;
+            }
+
+            const retry_password = $("#retry_password").val();
+            if (retry_password === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请再次输入密码。',
+                });
+                return false;
+            }
+
+            const email = $("#email").val();
+            if (email === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入邮箱地址',
+                });
+                return false;
+            }
+
+            if (retry_password !== password) {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '两次密码输入不一致',
+                });
+                return false;
+            }
+
+            const postData = {
+                username: username,
+                password: password,
+                retry_password: retry_password,
+                email: email,
+            };
+
+            AjaxForm(
+                "POST",
+                "/sign_up",
+                postData,
+                function () {
+                },
+                // 成功
+                function (response) {
+                    AjaxMsg(response);
+                },
+                // 失败
+                function (response) {
+                    AjaxMsg(response);
+                }
+            );
+        });
+    })
+</script>
+</body>
+</html>

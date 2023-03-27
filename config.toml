@@ -5,20 +5,20 @@ ListenPort = 7788
 EnableRedisCache = false
 EnableLocalCache = false
 MinPasswordLength = 8
-MaxUsernameLen = 32
+MaxUsernameLen = 30
 HomePage = "home.html"
 LoginPage = "login.html"
 RegistPage = "regist.html"
-EnterPage = "enter.html"
+EnterPage = "login_regist.html"
 PasswordComplexitys = ["lower", "upper", "digit", "spec"]
 
 
 
 [Redis]
-Addr = "localhost:6379" # redis
+Addr = "10.10.40.231:6379" # redis
 
 [MySQL]
-Addr = "lijunshi:lijunshipwd@tcp(localhost:3306)/users"
+Addr = "lijunshi:lijunshipwd@tcp(10.10.40.231:3306)/users"
 MaxIdle = 2
 MaxConn = 10
 ShowSQL = false

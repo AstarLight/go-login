@@ -1,25 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>XX开放平台首页</title>
-</head>
-
-
-<body>
-
-<h1 style="text-align: center;">XX开放平台首页</h1>
-<p>欢迎来到XX研究中心</p>
-
-
-
-<form action="/user/sign_out" method="post" novalidate autocapitalize="off">
-    <div>
-    <input type="submit" value="注销登录">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+        <title>登录页面</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/assets/bootstrap/favicon.ico">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-touch-fullscreen" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <link rel="stylesheet" type="text/css" href="/assets/bootstrap/js/jquery-confirm/jquery-confirm.min.css">
+        <link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/materialdesignicons.min.css">
+        <link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/style.min.css">
+    
+        <style>
+            .login-form .has-feedback {
+                position: relative;
+            }
+    
+            .login-form .has-feedback .form-control {
+                padding-left: 36px;
+            }
+    
+            .login-form .has-feedback .mdi {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: auto;
+                width: 36px;
+                height: 36px;
+                line-height: 36px;
+                z-index: 4;
+                color: #dcdcdc;
+                display: block;
+                text-align: center;
+                pointer-events: none;
+            }
+    
+            .login-form .has-feedback.row .mdi {
+                left: 15px;
+            }
+        </style>
+    </head>
+    
+    <body class="center-vh">
+    <div class="card card-shadowed p-5 w-420 mb-0 mr-2 ml-2">
+        <h1>XX开放平台首页</h1>
+        <div class="login-another">
+            <a href="/user/update_password_page.html">去更新密码</a>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-block btn-primary" id="btnOk" type="button">退出登录</button>
+        </div>
+        </form>
     </div>
-</form>
 
-<a href="/user/update_password_page.html">去更新密码</a>
+
+    
+<script type="text/javascript" src="/assets/bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/authorization/md5.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript">
+
+function JumpLogin() {
+    window.open("/admin_login.html",'_self');
+}
+
+function AjaxMsg(response) {
+    if (typeof response == 'object' && response) {
+        errCode = response.code;
+        errMsg = response.msg;
+
+        if (errCode == 0 && errMsg == "") {
+            $.alert('退出登录成功！正在跳转登录页面。。' );
+            setTimeout(JumpLogin,1000);
+
+        } else {
+            $.alert({
+                title: '错误提示',
+                icon: 'mdi mdi-alert',
+                type: 'red',
+                content: '错误码：' + errCode + '<br/>' + '错误信息：' + errMsg,
+            });
+        }
+    } else {
+        let errCode = response.status;
+        let errMsg = response.responseText;
+
+        $.alert({
+            title: '错误提示',
+            icon: 'mdi mdi-alert',
+            type: 'red',
+            content: '错误码：' + errCode + '<br/>' + '错误信息：' + errMsg,
+        });
+    }
+
+}
+
+    $(document).ready(function () {
+
+        // 回车触发按钮事件
+        $(document).keyup(function (event) {
+            if (event.keyCode === 13) {
+                $("#btnOk").trigger("click");
+            }
+        });
+
+        $('#btnOk').on('click', function () {
+
+            const postData = {
+
+            };
+
+            AjaxForm(
+                "POST",
+                "/user/sign_out",
+                postData,
+                function () {
+                },
+                // 成功
+                function (response) {
+                    AjaxMsg(response);
+                },
+                // 失败
+                function (response) {
+                    AjaxMsg(response);
+                }
+            );
+        });
+    })
+</script>
 
 
 </body>
