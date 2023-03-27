@@ -8,9 +8,17 @@
 - viper管理配置文件
 - gin为web server框架
 
+## 效果图
+
 ![登录页面](./images/3.png)
 ![注册页面](./images/5.png)
 ![注册页面跳转](./images/4.png)
 ![主页](./images/1.png)
 
 ![修改页码页面](./images/2.png)
+
+## 运行
+```
+go run .
+
+```
