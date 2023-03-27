@@ -59,7 +59,7 @@ func SignIn(c *gin.Context) {
 		fmt.Println("DBUpdateUser err: ", err)
 	}
 
-	//登录成功，重定向到首页
+	//登录成功
 	c.SetCookie("SESSION", session.ID, 0, "", "", false, true)
 	c.SetCookie("USERNAME", session.Username, 0, "", "", false, true)
 	c.SetCookie("UID", string(session.UID), 0, "", "", false, true)
